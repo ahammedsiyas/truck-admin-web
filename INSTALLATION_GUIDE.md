@@ -7,7 +7,7 @@
 - ✅ Modern responsive UI
 - ✅ Admin authentication integrated
 - ✅ Drivers page connected to backend
-- ✅ All other pages ready for backend integration
+- ✅ All other pages ready for backend  integration
 
 ---
 
