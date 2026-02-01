@@ -5,18 +5,14 @@ const Bookings = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState('');
   const [assignLoading, setAssignLoading] = useState(false);
-=======
-  const [showQuotesModal, setShowQuotesModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
   const [quotations, setQuotations] = useState([]);
   const [quoteLoading, setQuoteLoading] = useState(false);
->>>>>>> e60aef4 (Initial admin web commit)
 
   const tabs = [
     { id: 'all', label: 'All', count: 45 },
@@ -72,18 +68,15 @@ const Bookings = () => {
     fetchBookings();
   }, [fetchBookings]);
 
-<<<<<<< HEAD
   const openAssignModal = async (booking) => {
     setSelectedBooking(booking);
     setShowAssignModal(true);
-    
     // Fetch approved drivers
     const token = localStorage.getItem('adminToken');
     try {
       const driversRes = await fetch('http://172.20.10.6:5000/api/admin/drivers/approved', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
       const driversData = await driversRes.json();
       setDrivers(driversData.drivers || []);
     } catch (err) {
@@ -97,7 +90,6 @@ const Bookings = () => {
       alert('Please select a driver');
       return;
     }
-
     setAssignLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
@@ -111,12 +103,10 @@ const Bookings = () => {
           driverId: selectedDriver
         })
       });
-
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to assign driver');
       }
-
       alert('✓ Driver assigned successfully!');
       setShowAssignModal(false);
       setSelectedBooking(null);
@@ -126,7 +116,9 @@ const Bookings = () => {
       alert('❌ ' + err.message);
     } finally {
       setAssignLoading(false);
-=======
+    }
+  };
+
   const openQuotesModal = async (booking) => {
     setSelectedBooking(booking);
     setShowQuotesModal(true);
@@ -163,7 +155,6 @@ const Bookings = () => {
       alert('Failed to select quotation');
     } finally {
       setQuoteLoading(false);
->>>>>>> e60aef4 (Initial admin web commit)
     }
   };
 
@@ -248,7 +239,6 @@ const Bookings = () => {
                     >
                       View
                     </button>
-<<<<<<< HEAD
                     {(booking.status === 'pending' || booking.status === 'confirmed') && !booking.driverId && (
                       <button 
                         className="action-btn assign-btn"
@@ -257,14 +247,12 @@ const Bookings = () => {
                         Assign Driver
                       </button>
                     )}
-=======
                     <button 
                       className="action-btn view-btn"
                       onClick={() => openQuotesModal(booking)}
                     >
                       View Quotations
                     </button>
->>>>>>> e60aef4 (Initial admin web commit)
                   </div>
                 </td>
               </tr>
@@ -277,7 +265,6 @@ const Bookings = () => {
         )}
       </div>
 
-<<<<<<< HEAD
       {/* Assign Driver Modal */}
       {showAssignModal && (
         <div className="modal-overlay" onClick={() => setShowAssignModal(false)}>
@@ -320,7 +307,11 @@ const Bookings = () => {
                   {assignLoading ? 'Assigning...' : 'Confirm Assignment'}
                 </button>
               </div>
-=======
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quotations Modal */}
       {showQuotesModal && (
         <div className="modal-overlay" onClick={() => setShowQuotesModal(false)}>
@@ -367,13 +358,12 @@ const Bookings = () => {
               <button className="btn btn-cancel" onClick={() => setShowQuotesModal(false)} disabled={quoteLoading}>
                 Close
               </button>
->>>>>>> e60aef4 (Initial admin web commit)
             </div>
           </div>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default Bookings;
