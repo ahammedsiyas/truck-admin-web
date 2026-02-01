@@ -1,0 +1,64 @@
+<<<<<<< HEAD
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+=======
+node_modules
+>>>>>>> e60aef4 (Initial admin web commit)
+
+# Environment variables
+.env
+.env.*
+
+# Log files
+*.log
+<<<<<<< HEAD
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+=======
+logs/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Build output
+dist/
+build/
+>>>>>>> e60aef4 (Initial admin web commit)
+
+# IDE and editor folders
+.vscode/
+.idea/
+
+<<<<<<< HEAD
+# Misc
+coverage/
+*.local
+*.sublime-workspace
+*.sublime-project
+node_modules
+=======
+# Miscellaneous
+*.local
+*.cache
+*.bak
+*.swp
+*.swo
+
+# Private keys and credentials
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.cert
+>>>>>>> e60aef4 (Initial admin web commit)

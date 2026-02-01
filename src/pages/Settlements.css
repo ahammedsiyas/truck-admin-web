@@ -1,0 +1,151 @@
+.settlements-page {
+  width: 100%;
+}
+
+.settlements-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: 16px;
+  color: #718096;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.settlements-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.settlements-table thead {
+  background: #f7fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.settlements-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settlements-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.settlements-table tbody tr {
+  transition: background 0.2s;
+}
+
+.settlements-table tbody tr:hover {
+  background: #f7fafc;
+}
+
+.settlement-id {
+  font-weight: 600;
+  color: #4299e1;
+}
+
+.amount {
+  font-weight: 700;
+  color: #38a169;
+  font-size: 16px;
+}
+
+.invoice-count-badge {
+  background: #edf2f7;
+  color: #2d3748;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-status-pending {
+  background: #fef5e7;
+  color: #d97706;
+}
+
+.admin-status-approved {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.payment-status-unpaid {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.payment-status-paid {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn {
+  background: #edf2f7;
+  color: #2d3748;
+}
+
+.view-btn:hover {
+  background: #e2e8f0;
+}
+
+.approve-btn {
+  background: #38a169;
+  color: white;
+}
+
+.approve-btn:hover {
+  background: #2f855a;
+}
+
+.pay-btn {
+  background: #4299e1;
+  color: white;
+}
+
+.pay-btn:hover {
+  background: #3182ce;
+}
+
+.no-data {
+  padding: 40px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 14px;
+}

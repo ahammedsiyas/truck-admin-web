@@ -1,0 +1,103 @@
+.users-page {
+  width: 100%;
+}
+
+.users-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: 16px;
+  color: #718096;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table thead {
+  background: #f7fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.users-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.users-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.users-table tbody tr {
+  transition: background 0.2s;
+}
+
+.users-table tbody tr:hover {
+  background: #f7fafc;
+}
+
+.user-id {
+  font-weight: 600;
+  color: #4299e1;
+}
+
+.user-name {
+  font-weight: 600;
+}
+
+.total-bookings,
+.active-bookings {
+  font-weight: 600;
+  text-align: center;
+}
+
+.total-bookings {
+  color: #6366f1;
+}
+
+.active-bookings {
+  color: #059669;
+}
+
+.action-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn {
+  background: #4299e1;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #3182ce;
+}
+
+.no-data {
+  padding: 40px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 14px;
+}
