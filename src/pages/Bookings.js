@@ -29,18 +29,21 @@ const Bookings = () => {
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('adminToken');
       const response = await fetch('http://172.20.10.6:5000/api/admin/bookings', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
       if (!response.ok) {
         throw new Error('Failed to fetch bookings');
       }
 
-      const allBookings = await response.json();
+      const [showAssignModal, setShowAssignModal] = useState(false);
+      const [drivers, setDrivers] = useState([]);
+      const [selectedDriver, setSelectedDriver] = useState('');
+      const [assignLoading, setAssignLoading] = useState(false);
+      const [quotations, setQuotations] = useState([]);
+      const [quoteLoading, setQuoteLoading] = useState(false);
 
       // Transform backend data to UI format
       const transformedBookings = allBookings.map(booking => ({

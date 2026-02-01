@@ -7,7 +7,7 @@ A comprehensive web-based admin dashboard for VGC Transport with 11 functional p
 ## 📊 Dashboard Features
 
 ### Layout Structure
-- **Left Sidebar**: Collapsible navigation with 11 menu items
+- **Left Sidebar**: Collapsible navigation with 11 menu  items
 - **Top Header**: Admin name, role, and logout button
 - **Main Content Area**: Dynamic page rendering based on navigation
 
