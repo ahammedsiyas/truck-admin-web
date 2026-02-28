@@ -26,7 +26,7 @@ const Bookings = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://172.20.10.6:5000/api/admin/bookings', {
+      const response = await fetch('http://54.174.219.57:5000/api/admin/bookings', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -67,7 +67,7 @@ const Bookings = () => {
     // Fetch approved drivers
     const token = localStorage.getItem('adminToken');
     try {
-      const driversRes = await fetch('http://172.20.10.6:5000/api/admin/drivers/approved', {
+      const driversRes = await fetch('http://54.174.219.57:5000/api/admin/drivers/approved', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const driversData = await driversRes.json();
@@ -86,7 +86,7 @@ const Bookings = () => {
     setAssignLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://172.20.10.6:5000/api/admin/bookings/${selectedBooking.id}/assign`, {
+      const response = await fetch(`http://54.174.219.57:5000/api/admin/bookings/${selectedBooking.id}/assign`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const Bookings = () => {
     setQuoteLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://172.20.10.6:5000/api/quotations/for-booking/${booking.id}`, {
+      const res = await fetch(`http://54.174.219.57:5000/api/quotations/for-booking/${booking.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -135,7 +135,7 @@ const Bookings = () => {
     setQuoteLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://172.20.10.6:5000/api/quotations/${quoteId}/select`, {
+      const res = await fetch(`http://54.174.219.57:5000/api/quotations/${quoteId}/select`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -532,3 +532,20 @@
   box-shadow: 0 8px 20px rgba(229, 62, 62, 0.4);
 }
 
+.verify-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.verify-btn:hover {
+  background-color: #45a049;
+}
+
+.verified-badge {
+  color: green;
+  font-weight: bold;
+}

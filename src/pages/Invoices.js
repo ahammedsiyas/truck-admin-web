@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './Invoices.css';
-
+import {
+  getInvoices,
+  confirmBankTransfer,
+  rejectBankTransfer
+} from '../services/invoice';
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,34 +16,9 @@ const Invoices = () => {
   const fetchInvoices = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with GET /api/invoices
-      const mockInvoices = [
-        {
-          id: 'INV-2001',
-          loadId: 'BK-1003',
-          driver: 'Sarah Smith',
-          amount: 52000,
-          status: 'admin_reviewing',
-          createdDate: '2026-01-10',
-        },
-        {
-          id: 'INV-2002',
-          loadId: 'BK-1005',
-          driver: 'John Doe',
-          amount: 38000,
-          status: 'confirmed',
-          createdDate: '2026-01-09',
-        },
-        {
-          id: 'INV-2003',
-          loadId: 'BK-1007',
-          driver: 'Mike Johnson',
-          amount: 45000,
-          status: 'paid',
-          createdDate: '2026-01-08',
-        },
-      ];
-      setInvoices(mockInvoices);
+      const data = await getInvoices();
+
+      setInvoices(data);
     } catch (err) {
       console.error('Failed to fetch invoices:', err);
     } finally {
@@ -47,17 +26,29 @@ const Invoices = () => {
     }
   };
 
-  const handleConfirmInvoice = async (invoiceId) => {
-    if (!window.confirm('Confirm this invoice? Driver will be able to request payment.')) return;
-    
+  const handleMarkPaid = async (invoiceId) => {
+    if (!window.confirm('Mark this invoice as paid?')) return;
+
     try {
-      // API: PUT /api/invoices/:id/confirm
-      console.log('Confirming invoice:', invoiceId);
-      alert('Invoice confirmed successfully');
+      await confirmBankTransfer(invoiceId);
+      alert('Invoice marked as paid');
       fetchInvoices();
     } catch (err) {
-      console.error('Failed to confirm invoice:', err);
-      alert('Failed to confirm invoice');
+      console.error(err);
+      alert('Failed to mark as paid');
+    }
+  };
+
+  const handleRejectPayment = async (invoiceId) => {
+    if (!window.confirm('Reject this bank transfer?')) return;
+
+    try {
+      await rejectBankTransfer(invoiceId);
+      alert('Invoice rejected');
+      fetchInvoices();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to reject payment');
     }
   };
 
@@ -92,23 +83,39 @@ const Invoices = () => {
           </thead>
           <tbody>
             {invoices.map((invoice) => (
-              <tr key={invoice.id}>
-                <td className="invoice-id">{invoice.id}</td>
-                <td>{invoice.loadId}</td>
-                <td>{invoice.driver}</td>
-                <td className="amount">₹{invoice.amount.toLocaleString()}</td>
-                <td>{getStatusBadge(invoice.status)}</td>
-                <td>{new Date(invoice.createdDate).toLocaleDateString()}</td>
+              <tr key={invoice._id}>
+                
+                  <td>{invoice._id.slice(0, 8)}</td>
+
+                  <td>{invoice.trip?._id?.slice(0, 8)}</td>
+
+                  <td>{invoice.driver?.name || invoice.driver?.vehicleNumber}</td>
+
+                  <td>${invoice.totalAmount?.toLocaleString()}</td>
+
+                  <td>{getStatusBadge(invoice.status)}</td>
+
+                  <td>{new Date(invoice.createdAt).toLocaleDateString()}</td>
+                
                 <td>
                   <div className="action-buttons">
                     <button className="action-btn view-btn">View</button>
-                    {invoice.status === 'admin_reviewing' && (
-                      <button 
-                        className="action-btn confirm-btn"
-                        onClick={() => handleConfirmInvoice(invoice.id)}
-                      >
-                        Confirm
-                      </button>
+                    {invoice.status === 'awaiting_bank_transfer' && (
+                      <>
+                        <button
+                          className="action-btn confirm-btn"
+                          onClick={() => handleMarkPaid(invoice._id)}
+                        >
+                          Mark Paid
+                        </button>
+
+                        <button
+                          className="action-btn reject-btn"
+                          onClick={() => handleRejectPayment(invoice._id)}
+                        >
+                          Reject
+                        </button>
+                      </>
                     )}
                   </div>
                 </td>

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Ratings.css';
-
+import { getRatings } from '../services/rating';
 const Ratings = () => {
   const [ratings, setRatings] = useState([]);
+
+  
+    console.log(ratings);
   const [stats, setStats] = useState({
     averageRating: 0,
     totalReviews: 0,
@@ -14,57 +17,39 @@ const Ratings = () => {
     fetchRatings();
   }, []);
 
-  const fetchRatings = async () => {
-    try {
-      setLoading(true);
-      // Mock data - replace with GET /api/ratings
-      const mockRatings = [
-        {
-          id: 'RAT-4001',
-          tripId: 'TR-5003',
-          user: 'ABC Corporation',
-          driver: 'Mike Johnson',
-          rating: 5,
-          comment: 'Excellent service! Driver was professional and on time.',
-          date: '2026-01-10',
-        },
-        {
-          id: 'RAT-4002',
-          tripId: 'TR-5001',
-          user: 'XYZ Industries',
-          driver: 'John Doe',
-          rating: 4,
-          comment: 'Good service, slightly delayed but overall satisfied.',
-          date: '2026-01-09',
-        },
-        {
-          id: 'RAT-4003',
-          tripId: 'TR-4998',
-          user: 'Tech Solutions',
-          driver: 'Sarah Smith',
-          rating: 5,
-          comment: 'Perfect delivery! Highly recommend.',
-          date: '2026-01-08',
-        },
-      ];
-      
-      setRatings(mockRatings);
+ const fetchRatings = async () => {
+  try {
+    setLoading(true);
 
-      // Calculate stats
-      const totalReviews = mockRatings.length;
-      const totalStars = mockRatings.reduce((sum, r) => sum + r.rating, 0);
-      const averageRating = totalReviews > 0 ? (totalStars / totalReviews).toFixed(1) : 0;
-      
-      const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-      mockRatings.forEach(r => breakdown[r.rating]++);
+    const response = await getRatings();
+    console.log(response);
+    
 
-      setStats({ averageRating, totalReviews, breakdown });
-    } catch (err) {
-      console.error('Failed to fetch ratings:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const realRatings = response.data;
+    const realStats = response.stats;
+
+    setRatings(
+      realRatings.map((r) => ({
+        id: r._id,
+        tripId: r.trip?.bookingId || r.trip?._id,
+        user: `${r.user?.firstName || ""} ${r.user?.lastName || ""}`,
+        driver: `${r.driver?.userId?.firstName || ""} ${r.driver?.userId?.lastName || ""}`,
+        rating: r.rating,
+        comment: r.comment,
+        date: r.createdAt,
+      }))
+    );
+
+    
+
+    setStats(realStats);
+
+  } catch (err) {
+    console.error('Failed to fetch ratings:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderStars = (rating) => {
     return '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
@@ -135,7 +120,7 @@ const Ratings = () => {
                     <span className="rating-value">{rating.rating}/5</span>
                   </div>
                 </td>
-                <td className="comment-cell">{rating.comment}</td>
+                <td className="comment-cell">{rating.comment||"No Comments"}</td>
                 <td>{new Date(rating.date).toLocaleDateString()}</td>
               </tr>
             ))}

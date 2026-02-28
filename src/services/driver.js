@@ -25,3 +25,7 @@ export const rejectDriver = async (driverId) => {
   const response = await api.put(`/admin/drivers/${driverId}/reject`);
   return response.data;
 };
+
+export const verifyDriverBank = async (driverId) => {
+  return api.put(`/drivers/${driverId}/verify-bank`);
+};

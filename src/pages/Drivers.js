@@ -3,12 +3,31 @@ import { Toaster, toast } from 'sonner';
 import * as driverService from '../services/driver';
 import getErrorMessage from '../utils/errorHandler';
 import './Drivers.css';
-
-const API_BASE_URL = 'http://localhost:5000';
+import { verifyDriverBank } from '../services/driver';
+const API_BASE_URL = 'http://54.174.219.57:5000';
 
 // Table component for reuse (must be outside main component)
-function DriverTable({ drivers, actionLoading, handleViewDocuments, handleApprove, handleReject, getStatusBadge }) {
+function DriverTable({ drivers, actionLoading, handleViewDocuments, handleApprove, handleReject, getStatusBadge,onBankVerified }) {
   if (!drivers || drivers.length === 0) return <div className="no-data">No drivers found</div>;
+  const handleVerifyBank = async (driverId) => {
+    try {
+      const confirm = window.confirm(
+        "Are you sure you want to verify this driver's bank details?"
+      );
+
+      if (!confirm) return;
+
+      await verifyDriverBank(driverId);
+
+      alert("Bank verified successfully ✅");
+
+ if(onBankVerified) onBankVerified();
+
+    } catch (error) {
+      console.error("Bank verification failed:", error);
+      alert("Failed to verify bank details ❌");
+    }
+  };
   return (
     <div className="table-container">
       <table className="drivers-table">
@@ -20,6 +39,7 @@ function DriverTable({ drivers, actionLoading, handleViewDocuments, handleApprov
             <th>Vehicle Details</th>
             <th>Documents</th>
             <th>Status</th>
+            <th>Bank Verification</th>
             <th>Registered</th>
             <th>Actions</th>
           </tr>
@@ -48,10 +68,22 @@ function DriverTable({ drivers, actionLoading, handleViewDocuments, handleApprov
                 )}
               </td>
               <td>{getStatusBadge(driver.approvalStatus)}</td>
+              <td>
+                {driver.bankDetails?.isVerified ? (
+                  <span className="verified-badge">Verified ✅</span>
+                ) : (
+                  <button
+                    className="verify-btn"
+                    onClick={() => handleVerifyBank(driver._id)}
+                  >
+                    Verify Bank
+                  </button>
+                )}
+              </td>
               <td>{new Date(driver.createdAt).toLocaleDateString()}</td>
               <td>
                 <div className="action-buttons">
-                  <button 
+                  <button
                     className="action-btn view-btn"
                     onClick={() => handleViewDocuments(driver)}
                   >
@@ -59,14 +91,14 @@ function DriverTable({ drivers, actionLoading, handleViewDocuments, handleApprov
                   </button>
                   {handleApprove && handleReject && driver.approvalStatus === 'pending' && (
                     <>
-                      <button 
+                      <button
                         className="action-btn approve-btn"
                         onClick={() => handleApprove(driver._id)}
                         disabled={actionLoading === driver._id}
                       >
                         Approve
                       </button>
-                      <button 
+                      <button
                         className="action-btn reject-btn"
                         onClick={() => handleReject(driver._id)}
                         disabled={actionLoading === driver._id}
@@ -237,7 +269,7 @@ const Drivers = () => {
       ) : activeTab === 'all' ? (
         <>
           <h3>Pending Drivers</h3>
-          <DriverTable drivers={drivers.pending || []} actionLoading={actionLoading} handleViewDocuments={handleViewDocuments} handleApprove={handleApprove} handleReject={handleReject} getStatusBadge={getStatusBadge} />
+          <DriverTable drivers={drivers.pending || []} onBankVerified={fetchDrivers} actionLoading={actionLoading} handleViewDocuments={handleViewDocuments} handleApprove={handleApprove} handleReject={handleReject} getStatusBadge={getStatusBadge} />
           <h3>Approved Drivers</h3>
           <DriverTable drivers={drivers.approved || []} actionLoading={actionLoading} handleViewDocuments={handleViewDocuments} getStatusBadge={getStatusBadge} />
           <h3>Rejected Drivers</h3>
@@ -278,9 +310,8 @@ const Drivers = () => {
                 Cancel
               </button>
               <button
-                className={`confirm-btn action-btn ${
-                  confirmAction.type === 'approve' ? 'approve-action-btn' : 'reject-action-btn'
-                }`}
+                className={`confirm-btn action-btn ${confirmAction.type === 'approve' ? 'approve-action-btn' : 'reject-action-btn'
+                  }`}
                 onClick={handleConfirmAction}
                 disabled={actionLoading === confirmAction.driverId}
               >
@@ -322,9 +353,9 @@ const Drivers = () => {
                 <div className="document-item">
                   <h3>License Document</h3>
                   {selectedDriver.licenseImageUrl ? (
-                    <img 
-                      src={`${API_BASE_URL}/${selectedDriver.licenseImageUrl}`} 
-                      alt="License" 
+                    <img
+                      src={`${API_BASE_URL}/${selectedDriver.licenseImageUrl}`}
+                      alt="License"
                       className="document-image"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -335,15 +366,15 @@ const Drivers = () => {
                   {!selectedDriver.licenseImageUrl && (
                     <div className="no-document">No license document uploaded</div>
                   )}
-                  <div className="image-error" style={{display: 'none'}}>Failed to load image</div>
+                  <div className="image-error" style={{ display: 'none' }}>Failed to load image</div>
                 </div>
 
                 <div className="document-item">
                   <h3>RC Document</h3>
                   {selectedDriver.rcImageUrl ? (
-                    <img 
-                      src={`${API_BASE_URL}/${selectedDriver.rcImageUrl}`} 
-                      alt="RC" 
+                    <img
+                      src={`${API_BASE_URL}/${selectedDriver.rcImageUrl}`}
+                      alt="RC"
                       className="document-image"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -354,21 +385,21 @@ const Drivers = () => {
                   {!selectedDriver.rcImageUrl && (
                     <div className="no-document">No RC document uploaded</div>
                   )}
-                  <div className="image-error" style={{display: 'none'}}>Failed to load image</div>
+                  <div className="image-error" style={{ display: 'none' }}>Failed to load image</div>
                 </div>
               </div>
             </div>
             <div className="modal-footer">
               {selectedDriver.approvalStatus === 'pending' && (
                 <>
-                  <button 
+                  <button
                     className="modal-btn approve-modal-btn"
                     onClick={() => handleApprove(selectedDriver._id)}
                     disabled={actionLoading === selectedDriver._id}
                   >
                     ✓ Approve Driver
                   </button>
-                  <button 
+                  <button
                     className="modal-btn reject-modal-btn"
                     onClick={() => handleReject(selectedDriver._id)}
                     disabled={actionLoading === selectedDriver._id}
@@ -387,5 +418,7 @@ const Drivers = () => {
     </div>
   );
 };
+
+
 
 export default Drivers;

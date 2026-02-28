@@ -1,9 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import './Users.css';
+import api from '../services/api';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -12,34 +15,12 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with GET /api/users?role=user
-      const mockUsers = [
-        {
-          id: 'USR-6001',
-          firstName: 'ABC',
-          lastName: 'Corporation',
-          email: 'contact@abc.com',
-          phone: '+91 98765 43210',
-          companyName: 'ABC Corporation',
-          totalBookings: 15,
-          activeBookings: 3,
-          registeredDate: '2025-12-01',
-        },
-        {
-          id: 'USR-6002',
-          firstName: 'XYZ',
-          lastName: 'Industries',
-          email: 'info@xyz.com',
-          phone: '+91 98765 43211',
-          companyName: 'XYZ Industries',
-          totalBookings: 23,
-          activeBookings: 5,
-          registeredDate: '2025-11-15',
-        },
-      ];
-      setUsers(mockUsers);
+      // Fetch all users with role=user (shippers)
+      const res = await api.get('/admin/users?role=user');
+      setUsers(res.data.users || []);
     } catch (err) {
       console.error('Failed to fetch users:', err);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -80,7 +61,7 @@ const Users = () => {
                 <td className="active-bookings">{user.activeBookings}</td>
                 <td>{new Date(user.registeredDate).toLocaleDateString()}</td>
                 <td>
-                  <button className="action-btn view-btn">View</button>
+                  <button className="action-btn view-btn" onClick={() => setSelectedUser(user)}>View</button>
                 </td>
               </tr>
             ))}
@@ -91,6 +72,28 @@ const Users = () => {
           <div className="no-data">No users found</div>
         )}
       </div>
+
+      {/* User Detail Modal */}
+      {selectedUser && (
+        <div className="modal-overlay" onClick={() => setSelectedUser(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>User Details</h2>
+            <table className="user-detail-table">
+              <tbody>
+                <tr><td><b>User ID:</b></td><td>{selectedUser.id}</td></tr>
+                <tr><td><b>Name:</b></td><td>{selectedUser.firstName} {selectedUser.lastName}</td></tr>
+                <tr><td><b>Company:</b></td><td>{selectedUser.companyName}</td></tr>
+                <tr><td><b>Email:</b></td><td>{selectedUser.email}</td></tr>
+                <tr><td><b>Phone:</b></td><td>{selectedUser.phone}</td></tr>
+                <tr><td><b>Total Bookings:</b></td><td>{selectedUser.totalBookings}</td></tr>
+                <tr><td><b>Active Bookings:</b></td><td>{selectedUser.activeBookings}</td></tr>
+                <tr><td><b>Registered:</b></td><td>{new Date(selectedUser.registeredDate).toLocaleString()}</td></tr>
+              </tbody>
+            </table>
+            <button className="action-btn close-btn" onClick={() => setSelectedUser(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -62,6 +62,8 @@ function App() {
       case 'trucks':
         return <Trucks />;
       case 'pods':
+        console.log('current',currentPage);
+        
         return <PODs />;
       case 'invoices':
         return <Invoices />;

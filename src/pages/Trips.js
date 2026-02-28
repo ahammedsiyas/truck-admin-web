@@ -13,7 +13,7 @@ const Trips = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://172.20.10.6:5000/api/trips', {
+      const response = await fetch('http://54.174.219.57:5000/api/trips', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

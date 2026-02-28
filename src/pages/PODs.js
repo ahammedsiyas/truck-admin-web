@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './PODs.css';
+import api from '../services/api';
 
 const PODs = () => {
+  console.log("PODs component rendered");
   const [pods, setPods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPod, setSelectedPod] = useState(null);
@@ -10,73 +12,54 @@ const PODs = () => {
     fetchPods();
   }, []);
 
-  const fetchPods = async () => {
-    try {
-      setLoading(true);
-      // Mock data - replace with API call to GET /api/pods?status=pending
-      const mockPods = [
-        {
-          id: 'POD-8001',
-          loadId: 'BK-1003',
-          driver: 'Sarah Smith',
-          fromLocation: 'Chennai',
-          toLocation: 'Hyderabad',
-          uploadDate: '2026-01-10 02:30 PM',
-          status: 'pending',
-          images: [
-            'https://via.placeholder.com/300x200?text=POD+Image+1',
-            'https://via.placeholder.com/300x200?text=POD+Image+2',
-          ],
-        },
-        {
-          id: 'POD-8002',
-          loadId: 'BK-1005',
-          driver: 'John Doe',
-          fromLocation: 'Mumbai',
-          toLocation: 'Pune',
-          uploadDate: '2026-01-10 11:15 AM',
-          status: 'pending',
-          images: [
-            'https://via.placeholder.com/300x200?text=Delivery+Proof',
-          ],
-        },
-      ];
-      setPods(mockPods);
-    } catch (err) {
-      console.error('Failed to fetch PODs:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchPods = async () => {
+  try {
+    setLoading(true);
 
+    const res = await api.get('/trips/pods/pending');
+
+    console.log("POD DATA:", res.data);
+
+    setPods(res.data);
+
+  } catch (err) {
+console.error('Failed to fetch PODs:', err.response?.data || err.message);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleApprovePod = async (podId) => {
-    if (!window.confirm('Approve this POD? This will auto-create an invoice.')) return;
-    
-    try {
-      // API call: PUT /api/pods/:id/approve
-      console.log('Approving POD:', podId);
-      alert('POD approved! Invoice will be created automatically.');
-      fetchPods(); // Refresh list
-    } catch (err) {
-      console.error('Failed to approve POD:', err);
-      alert('Failed to approve POD');
-    }
-  };
+  if (!window.confirm('Approve this POD?')) return;
 
-  const handleRejectPod = async (podId) => {
-    const reason = prompt('Reason for rejection:');
-    if (!reason) return;
+  try {
+    await api.put(`/trips/${podId}/approve-pod`);
 
-    try {
-      // API call: PUT /api/pods/:id/reject
-      console.log('Rejecting POD:', podId, 'Reason:', reason);
-      alert('POD rejected. Driver will be notified.');
-      fetchPods(); // Refresh list
-    } catch (err) {
-      console.error('Failed to reject POD:', err);
-      alert('Failed to reject POD');
-    }
-  };
+    alert('POD approved successfully');
+
+    fetchPods(); // refresh list
+
+  } catch (err) {
+    console.error('Approve error:', err);
+    alert('Failed to approve POD');
+  }
+};
+
+ const handleRejectPod = async (podId) => {
+  const reason = prompt('Reason for rejection:');
+  if (!reason) return;
+
+  try {
+    await api.put(`/trips/${podId}/reject-pod`, { reason });
+
+    alert('POD rejected successfully');
+
+    fetchPods(); // refresh list
+
+  } catch (err) {
+    console.error('Reject error:', err);
+    alert('Failed to reject POD');
+  }
+};
 
   if (loading) {
     return <div className="pods-loading">Loading PODs...</div>;
@@ -85,7 +68,7 @@ const PODs = () => {
   return (
     <div className="pods-page">
       <div className="pods-grid">
-        {pods.map((pod) => (
+        {Array.isArray(pods) && pods.map((pod) => (
           <div key={pod.id} className="pod-card">
             <div className="pod-header">
               <div className="pod-id">{pod.id}</div>
@@ -96,7 +79,7 @@ const PODs = () => {
               {pod.images.map((img, idx) => (
                 <img 
                   key={idx} 
-                  src={img} 
+                  src={`http://54.174.219.57:5000/${img}`} 
                   alt={`POD ${idx + 1}`} 
                   className="pod-image"
                   onClick={() => setSelectedPod({ ...pod, selectedImage: img })}
